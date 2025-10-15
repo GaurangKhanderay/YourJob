@@ -9,8 +9,6 @@ import {
   AlertTriangle, 
   XCircle,
   Trash2,
-  MarkAsRead,
-  Filter,
   Search
 } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
@@ -118,7 +116,6 @@ export default function NotificationsPage() {
                 onClick={handleMarkAllAsRead}
                 className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
               >
-                <MarkAsRead className="h-4 w-4" />
                 Mark all as read
               </button>
             )}
