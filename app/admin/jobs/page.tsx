@@ -14,10 +14,12 @@ import {
   EyeOff,
   MapPin,
   Clock,
-  Users
+  Users,
+  Briefcase
 } from "lucide-react";
 import { Job } from "@/lib/types";
 import { formatDate, formatRelativeTime } from "@/lib/utils";
+import { Id } from "@/convex/_generated/dataModel";
 import toast from "react-hot-toast";
 
 export default function AdminJobsPage() {
@@ -32,7 +34,7 @@ export default function AdminJobsPage() {
   const deleteJob = useMutation(api.jobs.deleteJob);
   const updateJob = useMutation(api.jobs.updateJob);
 
-  const handleDelete = async (jobId: string) => {
+  const handleDelete = async (jobId: Id<"jobs">) => {
     if (!confirm("Are you sure you want to delete this job?")) return;
     
     try {

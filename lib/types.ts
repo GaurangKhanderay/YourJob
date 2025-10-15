@@ -1,5 +1,7 @@
+import { Id } from "@/convex/_generated/dataModel";
+
 export interface User {
-  _id: string;
+  _id: Id<"users">;
   email: string;
   name: string;
   role: "user" | "admin";
@@ -8,7 +10,7 @@ export interface User {
 }
 
 export interface Job {
-  _id: string;
+  _id: Id<"jobs">;
   title: string;
   company: string;
   description: string;
@@ -17,27 +19,27 @@ export interface Job {
   type: "full-time" | "part-time" | "contract" | "internship";
   experience: string;
   skills: string[];
-  postedBy: string;
+  postedBy: Id<"users">;
   postedAt: number;
   isActive: boolean;
   applicationsCount: number;
 }
 
 export interface Application {
-  _id: string;
-  userId: string;
-  jobId: string;
+  _id: Id<"applications">;
+  userId: Id<"users">;
+  jobId: Id<"jobs">;
   status: "applied" | "under-review" | "interview-scheduled" | "interviewed" | "offer" | "rejected" | "withdrawn";
   appliedAt: number;
   updatedAt: number;
   notes?: string;
-  resumeId?: string;
+  resumeId?: Id<"resumes">;
   job?: Job;
 }
 
 export interface Resume {
-  _id: string;
-  userId: string;
+  _id: Id<"resumes">;
+  userId: Id<"users">;
   fileName: string;
   fileUrl: string;
   uploadedAt: number;
@@ -55,8 +57,8 @@ export interface ResumeAnalysis {
 }
 
 export interface Notification {
-  _id: string;
-  userId: string;
+  _id: Id<"notifications">;
+  userId: Id<"users">;
   title: string;
   message: string;
   type: "info" | "success" | "warning" | "error";

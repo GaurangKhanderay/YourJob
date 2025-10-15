@@ -157,9 +157,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       </div>
 
       {/* Notifications panel */}
-      <NotificationPanel 
-        isOpen={showNotifications} 
-        onClose={() => setShowNotifications(false)} 
+      <NotificationPanel
+        open={showNotifications}
+        setOpen={setShowNotifications}
+        notifications={[]}
       />
     </div>
   );

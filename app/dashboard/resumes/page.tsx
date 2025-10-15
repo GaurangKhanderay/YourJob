@@ -181,7 +181,7 @@ export default function ResumesPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Avg Score</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {resumes?.filter(r => r.analysis).length > 0
+                  {resumes && resumes.filter(r => r.analysis).length > 0
                     ? Math.round(
                         resumes
                           .filter(r => r.analysis)
@@ -203,7 +203,7 @@ export default function ResumesPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Best Score</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {resumes?.length > 0
+                  {resumes && resumes.length > 0
                     ? Math.max(...(resumes.map(r => r.analysis?.score || 0)))
                     : 0
                   }

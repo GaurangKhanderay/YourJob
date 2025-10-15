@@ -21,9 +21,6 @@ export function RealTimeProvider() {
       if (isRecent) {
         toast.success(latestNotification.message, {
           duration: 5000,
-          onClick: () => {
-            markAsRead({ notificationId: latestNotification._id });
-          },
         });
       }
     }

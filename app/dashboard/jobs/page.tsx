@@ -54,7 +54,7 @@ export default function JobsPage() {
     return true;
   }) || [];
 
-  const uniqueLocations = [...new Set(jobs?.map(job => job.location) || [])];
+  const uniqueLocations = Array.from(new Set(jobs?.map(job => job.location) || []));
   const uniqueTypes = ["all", "full-time", "part-time", "contract", "internship"];
 
   return (

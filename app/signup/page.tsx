@@ -65,7 +65,7 @@ export default function SignUpPage() {
       return;
     }
 
-    const success = await signUp(formData.name, formData.email, formData.password);
+    const success = await signUp();
     if (success) {
       router.push("/login");
     }

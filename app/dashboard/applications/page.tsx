@@ -55,7 +55,7 @@ export default function ApplicationsPage() {
   const applications = useQuery(api.jobs.getUserApplications, {});
   const updateApplicationStatus = useMutation(api.jobs.updateApplicationStatus);
 
-  const handleStatusUpdate = async (applicationId: Id<"applications">, newStatus: string) => {
+  const handleStatusUpdate = async (applicationId: Id<"applications">, newStatus: "applied" | "under-review" | "interview-scheduled" | "interviewed" | "offer" | "rejected" | "withdrawn") => {
     try {
       await updateApplicationStatus({ applicationId, status: newStatus });
       toast.success("Application status updated!");
@@ -205,7 +205,7 @@ export default function ApplicationsPage() {
                         </span>
                         <select
                           value={application.status}
-                          onChange={(e) => handleStatusUpdate(application._id, e.target.value)}
+                          onChange={(e) => handleStatusUpdate(application._id, e.target.value as "applied" | "under-review" | "interview-scheduled" | "interviewed" | "offer" | "rejected" | "withdrawn")}
                           className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent"
                         >
                           {Object.entries(statusConfig).map(([status, config]) => (

@@ -7,6 +7,7 @@ import { Notification } from "@/lib/types";
 import { formatRelativeTime } from "@/lib/utils";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import toast from "react-hot-toast";
 
 interface NotificationPanelProps {
@@ -52,7 +53,7 @@ export function NotificationPanel({ open, setOpen, notifications }: Notification
     };
   }, [open, setOpen]);
 
-  const handleMarkAsRead = async (notificationId: string) => {
+  const handleMarkAsRead = async (notificationId: Id<"notifications">) => {
     try {
       await markAsRead({ notificationId });
       toast.success("Notification marked as read");
@@ -70,7 +71,7 @@ export function NotificationPanel({ open, setOpen, notifications }: Notification
     }
   };
 
-  const handleDelete = async (notificationId: string) => {
+  const handleDelete = async (notificationId: Id<"notifications">) => {
     try {
       await deleteNotification({ notificationId });
       toast.success("Notification deleted");

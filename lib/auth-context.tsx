@@ -3,11 +3,12 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import toast from "react-hot-toast";
 import { useSession, signIn as nextAuthSignIn, signOut as nextAuthSignOut } from "next-auth/react";
 
 interface User {
-  _id: string;
+  _id: Id<"users">;
   email: string;
   name: string;
   role: "user" | "admin";
@@ -18,8 +19,8 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<boolean>;
-  signUp: (name: string, email: string, password: string) => Promise<boolean>;
+  signIn: () => Promise<boolean>;
+  signUp: () => Promise<boolean>;
   signOut: () => void;
   updateProfile: (name: string) => Promise<boolean>;
 }
@@ -41,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           await upsertUser({ email: session.user.email, name: session.user.name });
           setUser({
-            _id: "", // not used on client directly
+            _id: "" as Id<"users">, // placeholder ID for client-side use
             email: session.user.email,
             name: session.user.name,
             role: "user",
