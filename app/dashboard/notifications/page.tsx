@@ -14,7 +14,7 @@ import {
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import toast from "react-hot-toast";
+toast from "react-hot-toast";
 
 interface Notification {
   _id: Id<"notifications">;
@@ -229,24 +229,22 @@ export default function NotificationsPage() {
                 }`}
               >
                 <div className="flex items-start space-x-4">
-                  <div className={`flex-shrink-0 p-2 rounded-full ${colorClass}`}>
+                  <div className={`flex-shrink-0 p-2 rounded-full ${colorClass}`}> 
                     <Icon className="h-5 w-5" />
                   </div>
-                  
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className={`text-lg font-medium ${
                           notification.isRead ? 'text-gray-500' : 'text-gray-900'
-                        }`}>
+                        }`}> 
                           {notification.title}
                         </h3>
                         <p className={`text-sm mt-1 ${
                           notification.isRead ? 'text-gray-400' : 'text-gray-600'
-                        }`}>
+                        }`}> 
                           {notification.message}
                         </p>
-                        
                         {notification.actionUrl && (
                           <a
                             href={notification.actionUrl}
@@ -256,12 +254,10 @@ export default function NotificationsPage() {
                           </a>
                         )}
                       </div>
-                      
                       <div className="flex items-center space-x-2 ml-4">
                         <span className="text-xs text-gray-500">
                           {new Date(notification.createdAt).toLocaleDateString()}
                         </span>
-                        
                         {!notification.isRead && (
                           <button
                             onClick={() => handleMarkAsRead(notification._id)}
@@ -270,7 +266,6 @@ export default function NotificationsPage() {
                             Mark read
                           </button>
                         )}
-                        
                         <button
                           onClick={() => handleDelete(notification._id)}
                           className="text-xs text-red-600 hover:text-red-800"
@@ -285,7 +280,6 @@ export default function NotificationsPage() {
             );
           })}
         </div>
-
         {filteredNotifications.length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}
