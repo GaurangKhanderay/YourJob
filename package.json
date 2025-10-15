@@ -39,7 +39,7 @@
   "devDependencies": {
     "@types/pdf-parse": "^1.1.1",
     "autoprefixer": "^10.4.16",
-    "eslint": "^9.37.0",
+    "eslint": "^8.57.0",
     "eslint-config-next": "14.0.0",
     "glob": "^11.0.3",
     "postcss": "^8.4.31",
