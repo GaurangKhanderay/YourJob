@@ -48,7 +48,8 @@ export const markNotificationAsRead = mutation({
 export const markAllNotificationsAsRead = mutation({
   args: {},
   handler: async (ctx) => {
-    const userId = "user_123" as any; // Demo user ID
+    const users = await ctx.db.query("users").collect();
+    const userId = (users[0]?._id as any) || ("" as any);
     
     const unreadNotifications = await ctx.db
       .query("notifications")
@@ -96,7 +97,8 @@ export const createNotification = mutation({
 export const deleteNotification = mutation({
   args: { notificationId: v.id("notifications") },
   handler: async (ctx, args) => {
-    const userId = "user_123" as any; // Demo user ID
+    const users = await ctx.db.query("users").collect();
+    const userId = (users[0]?._id as any) || ("" as any);
     
     const notification = await ctx.db.get(args.notificationId);
     if (!notification || notification.userId !== userId) {
