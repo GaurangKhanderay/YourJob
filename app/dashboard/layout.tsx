@@ -18,7 +18,7 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const { user, isLoading } = useAuth();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   
   const notifications = useQuery(api.notifications.getUserNotifications, { 
@@ -26,12 +26,12 @@ export default function DashboardLayout({
   });
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.push("/login");
+    if (status === "unauthenticated") {
+      router.replace("/login");
     }
-  }, [user, isLoading, router]);
+  }, [status, router]);
 
-  if (isLoading) {
+  if (status === "loading" || (status === "authenticated" && isLoading)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -42,8 +42,8 @@ export default function DashboardLayout({
     );
   }
 
-  if (!user) {
-    return null; // Will redirect to login
+  if (status === "unauthenticated") {
+    return null; // Redirected above
   }
 
   return (

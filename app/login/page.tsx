@@ -6,10 +6,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Briefcase } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { useSession, signIn as nextAuthSignIn } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
   const { signIn, user, isLoading: authLoading } = useAuth();
+  const { status } = useSession();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -18,17 +20,20 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (user && !authLoading) {
-      router.push("/dashboard");
+    if (status === "authenticated") {
+      router.replace("/dashboard");
     }
-  }, [user, authLoading, router]);
+  }, [status, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    const success = await signIn();
-    if (success) router.push("/dashboard");
-    setIsLoading(false);
+    try {
+      await nextAuthSignIn("google", { callbackUrl: "/dashboard" });
+    } finally {
+      // Loading state will be cleared after redirect or on error
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,7 +112,7 @@ export default function LoginPage() {
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-3">
-              <button onClick={() => signIn()} className="btn-outline w-full py-2 px-4 text-sm font-medium">
+              <button onClick={() => nextAuthSignIn("google", { callbackUrl: "/dashboard" })} className="btn-outline w-full py-2 px-4 text-sm font-medium">
                 <span className="">Sign in with Google</span>
               </button>
             </div>
