@@ -2,10 +2,25 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 export const getUserNotifications = query({
-  args: {},
-  handler: async (ctx) => {
-    const users = await ctx.db.query("users").collect();
-    const userId = (users[0]?._id as any) || ("" as any);
+  args: {
+    email: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    let userId = "" as any;
+    
+    if (args.email) {
+      const user = await ctx.db
+        .query("users")
+        .withIndex("by_email", (q) => q.eq("email", args.email!))
+        .first();
+      userId = user?._id || "";
+    } else {
+      // Fallback to first user for demo
+      const users = await ctx.db.query("users").collect();
+      userId = (users[0]?._id as any) || ("" as any);
+    }
+    
+    if (!userId) return [];
     
     return await ctx.db
       .query("notifications")
@@ -16,10 +31,24 @@ export const getUserNotifications = query({
 });
 
 export const getUnreadNotifications = query({
-  args: {},
-  handler: async (ctx) => {
-    const users = await ctx.db.query("users").collect();
-    const userId = (users[0]?._id as any) || ("" as any);
+  args: {
+    email: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    let userId = "" as any;
+    
+    if (args.email) {
+      const user = await ctx.db
+        .query("users")
+        .withIndex("by_email", (q) => q.eq("email", args.email!))
+        .first();
+      userId = user?._id || "";
+    } else {
+      const users = await ctx.db.query("users").collect();
+      userId = (users[0]?._id as any) || ("" as any);
+    }
+    
+    if (!userId) return [];
     
     return await ctx.db
       .query("notifications")

@@ -3,10 +3,14 @@
 import { useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 
 export function RealTimeProvider() {
-  const unreadNotifications = useQuery(api.notifications.getUnreadNotifications);
+  const { data: session } = useSession();
+  const unreadNotifications = useQuery(api.notifications.getUnreadNotifications, {
+    email: session?.user?.email || undefined
+  });
   const markAsRead = useMutation(api.notifications.markNotificationAsRead);
 
   useEffect(() => {

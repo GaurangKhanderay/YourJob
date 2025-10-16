@@ -35,21 +35,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const upsertUser = useMutation(api.users.upsertUserFromSession);
   const updateProfileMutation = useMutation(api.users.updateProfile);
 
+  const userProfile = useQuery(api.users.getProfile, { 
+    email: session?.user?.email || undefined 
+  });
+
   useEffect(() => {
     const sync = async () => {
       if (status === "loading") return;
       if (session?.user?.email && session.user.name) {
         try {
-          await upsertUser({ email: session.user.email, name: session.user.name });
-          setUser({
-            _id: "" as Id<"users">, // placeholder ID for client-side use
-            email: session.user.email,
-            name: session.user.name,
-            role: "user",
-            createdAt: Date.now(),
-          });
+          const userId = await upsertUser({ email: session.user.email, name: session.user.name });
+          // User will be set when userProfile query resolves
         } catch (e) {
-          // ignore
+          console.error("Error syncing user:", e);
         }
       } else {
         setUser(null);
@@ -58,6 +56,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     sync();
   }, [session, status, upsertUser]);
+
+  // Set user when profile is loaded
+  useEffect(() => {
+    if (userProfile && session?.user?.email) {
+      setUser({
+        _id: userProfile._id,
+        email: userProfile.email,
+        name: userProfile.name,
+        role: userProfile.role,
+        createdAt: userProfile.createdAt,
+        lastLoginAt: userProfile.lastLoginAt,
+      });
+    }
+  }, [userProfile, session]);
 
   const signIn = async (): Promise<boolean> => {
     try {

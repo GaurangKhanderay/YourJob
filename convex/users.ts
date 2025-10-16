@@ -2,9 +2,18 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 export const getProfile = query({
-  args: {},
-  handler: async (ctx) => {
-    // This should be fetched by session on client; keep simple here
+  args: {
+    email: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    if (args.email) {
+      const user = await ctx.db
+        .query("users")
+        .withIndex("by_email", (q) => q.eq("email", args.email!))
+        .first();
+      return user;
+    }
+    // Fallback to first user for demo purposes
     const users = await ctx.db.query("users").collect();
     return users[0] || null;
   },

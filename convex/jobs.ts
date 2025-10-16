@@ -167,10 +167,24 @@ export const applyToJob = mutation({
 });
 
 export const getUserApplications = query({
-  args: {},
-  handler: async (ctx) => {
-    const users = await ctx.db.query("users").collect();
-    const userId = (users[0]?._id as any) || ("" as any);
+  args: {
+    email: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    let userId = "" as any;
+    
+    if (args.email) {
+      const user = await ctx.db
+        .query("users")
+        .withIndex("by_email", (q) => q.eq("email", args.email!))
+        .first();
+      userId = user?._id || "";
+    } else {
+      const users = await ctx.db.query("users").collect();
+      userId = (users[0]?._id as any) || ("" as any);
+    }
+    
+    if (!userId) return [];
     
     const applications = await ctx.db
       .query("applications")

@@ -17,6 +17,7 @@ import {
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 
 interface Application {
@@ -51,8 +52,11 @@ export default function ApplicationsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+  const { data: session } = useSession();
 
-  const applications = useQuery(api.jobs.getUserApplications, {});
+  const applications = useQuery(api.jobs.getUserApplications, { 
+    email: session?.user?.email || undefined 
+  });
   const updateApplicationStatus = useMutation(api.jobs.updateApplicationStatus);
 
   const handleStatusUpdate = async (applicationId: Id<"applications">, newStatus: "applied" | "under-review" | "interview-scheduled" | "interviewed" | "offer" | "rejected" | "withdrawn") => {

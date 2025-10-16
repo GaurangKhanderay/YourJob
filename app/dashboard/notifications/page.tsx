@@ -14,6 +14,7 @@ import {
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 
 interface Notification {
@@ -44,8 +45,11 @@ export default function NotificationsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const { data: session } = useSession();
 
-  const notifications = useQuery(api.notifications.getUserNotifications, {});
+  const notifications = useQuery(api.notifications.getUserNotifications, { 
+    email: session?.user?.email || undefined 
+  });
   const markAsRead = useMutation(api.notifications.markNotificationAsRead);
   const markAllAsRead = useMutation(api.notifications.markAllNotificationsAsRead);
   const deleteNotification = useMutation(api.notifications.deleteNotification);

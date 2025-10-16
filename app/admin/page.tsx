@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { motion } from "framer-motion";
 import { 
@@ -11,18 +11,32 @@ import {
   TrendingUp,
   UserCheck,
   Calendar,
-  DollarSign
+  DollarSign,
+  Database
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import toast from "react-hot-toast";
 
 export default function AdminDashboard() {
   const userStats = useQuery(api.users.getUserStats);
   const allUsers = useQuery(api.users.getAllUsers);
   const allJobs = useQuery(api.jobs.getAllJobs, {});
   const allResumes = useQuery(api.resumes.getAllResumes);
+  const seedAll = useMutation(api.seed.seedAll);
 
   const recentUsers = allUsers?.slice(0, 5) || [];
   const recentJobs = allJobs?.slice(0, 5) || [];
+
+  const handleSeedData = async () => {
+    try {
+      const result = await seedAll({});
+      toast.success("Sample data seeded successfully!");
+      console.log(result);
+    } catch (error) {
+      toast.error("Failed to seed data");
+      console.error(error);
+    }
+  };
 
   const stats = [
     {
@@ -66,11 +80,20 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="mt-2 text-gray-600">
-          Overview of platform activity and user engagement.
-        </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          <p className="mt-2 text-gray-600">
+            Overview of platform activity and user engagement.
+          </p>
+        </div>
+        <button
+          onClick={handleSeedData}
+          className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+        >
+          <Database className="h-4 w-4" />
+          Seed Sample Data
+        </button>
       </div>
 
       {/* Stats Grid */}

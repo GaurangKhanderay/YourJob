@@ -170,3 +170,93 @@ export const seedUsers = mutation({
     return { message: `Successfully seeded ${sampleUsers.length} users` };
   },
 });
+
+export const seedNotifications = mutation({
+  args: {},
+  handler: async (ctx) => {
+    // Get the first user to create notifications for
+    const users = await ctx.db.query("users").collect();
+    if (users.length === 0) {
+      return { message: "No users found, please seed users first" };
+    }
+    
+    const userId = users[0]._id;
+    
+    const sampleNotifications = [
+      {
+        userId,
+        title: "Welcome to YourJob!",
+        message: "Thank you for joining our platform. Start exploring job opportunities and track your applications.",
+        type: "info" as const,
+        isRead: false,
+        createdAt: Date.now() - 3600000, // 1 hour ago
+        actionUrl: "/dashboard",
+      },
+      {
+        userId,
+        title: "New Job Match Found",
+        message: "We found 3 new jobs that match your profile. Check them out!",
+        type: "success" as const,
+        isRead: false,
+        createdAt: Date.now() - 7200000, // 2 hours ago
+        actionUrl: "/dashboard/jobs",
+      },
+      {
+        userId,
+        title: "Application Status Update",
+        message: "Your application for 'Senior Frontend Developer' has been reviewed.",
+        type: "info" as const,
+        isRead: true,
+        createdAt: Date.now() - 86400000, // 1 day ago
+        actionUrl: "/dashboard/applications",
+      },
+      {
+        userId,
+        title: "Resume Analysis Complete",
+        message: "Your resume has been analyzed. Check your score and improvement suggestions.",
+        type: "success" as const,
+        isRead: false,
+        createdAt: Date.now() - 172800000, // 2 days ago
+        actionUrl: "/dashboard/resumes",
+      },
+    ];
+
+    // Check if notifications already exist
+    const existingNotifications = await ctx.db.query("notifications").collect();
+    if (existingNotifications.length > 0) {
+      console.log("Notifications already exist, skipping seed");
+      return { message: "Notifications already exist" };
+    }
+
+    // Insert sample notifications
+    for (const notification of sampleNotifications) {
+      await ctx.db.insert("notifications", notification);
+    }
+
+    return { message: `Successfully seeded ${sampleNotifications.length} notifications` };
+  },
+});
+
+export const seedAll = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const results = [];
+    
+    // Seed users first
+    const userResult = await seedUsers(ctx, {});
+    results.push(userResult);
+    
+    // Seed jobs
+    const jobResult = await seedJobs(ctx, {});
+    results.push(jobResult);
+    
+    // Seed notifications
+    const notificationResult = await seedNotifications(ctx, {});
+    results.push(notificationResult);
+    
+    return { 
+      message: "All data seeded successfully",
+      results 
+    };
+  },
+});

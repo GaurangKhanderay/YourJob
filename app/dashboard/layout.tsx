@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useSession } from "next-auth/react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { Navbar } from "@/components/dashboard/Navbar";
 import { NotificationPanel } from "@/components/dashboard/NotificationPanel";
@@ -15,7 +18,12 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const { user, isLoading } = useAuth();
+  const { data: session } = useSession();
   const router = useRouter();
+  
+  const notifications = useQuery(api.notifications.getUserNotifications, { 
+    email: session?.user?.email || undefined 
+  });
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -47,7 +55,7 @@ export default function DashboardLayout({
           user={user}
           onMenuClick={() => setSidebarOpen(true)}
           onNotificationsClick={() => setNotificationsOpen(true)}
-          notificationCount={0}
+          notificationCount={notifications?.filter(n => !n.isRead).length || 0}
         />
         
         <main className="py-6">
@@ -60,7 +68,7 @@ export default function DashboardLayout({
       <NotificationPanel 
         open={notificationsOpen} 
         setOpen={setNotificationsOpen}
-        notifications={[]}
+        notifications={notifications || []}
       />
     </div>
   );
